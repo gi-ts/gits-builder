@@ -1,0 +1,17 @@
+{
+    "repos": [
+        {
+            "name": "base"
+        },
+        {
+            "name": "shell8"
+        },
+        {
+            "name": "gtk4",
+            "tag": "next"
+        },
+        {
+            "name": "gtk3"
+        }
+    ]
+}
