@@ -12,11 +12,11 @@ async function latestVersion(name, majorVersion, tag) {
     const versions = versionMap.get(name);
 
     if (!versions) {
-        console.error(`No versions for ${name}`);
-
         const pkg = await getCurrentPackage(`${prefix}/${name.toLowerCase()}`, tag);
+        console.error(`No versions for ${name}, checking npm...`);
 
         if (pkg) {
+            console.error(`Found version: ${pkg.version} from npm.`);
             return pkg.version;
         }
 
@@ -50,17 +50,19 @@ const prefix = '@gi-types';
 const npm = new NpmApi();
 
 async function getCurrentPackage(name, tag) {
-    let repo = npm.repo(name);
+    try {
+        let repo = npm.repo(name);
 
-    if (repo) {
-        try {
+        if (repo) {
             let pkg = await repo.version(tag);
 
             return pkg;
-        } catch (err) {
-            console.log(err)
+
         }
+    } catch (err) {
+        console.log(err.message);
     }
+
     return null;
 }
 
@@ -88,7 +90,18 @@ async function buildPackageJSON(path, meta, version, gitHead, tag, hasOverride =
     const pkg = await getCurrentPackage(`${prefix}/${meta.name.toLowerCase()}`, tag);
 
     if (pkg !== null) {
-        version = pkg.version;
+        const current = semver.coerce(pkg.version);
+        const intended = semver.coerce(version);
+        if (intended.major > current.major || (intended.major === current.major && intended.minor > current.minor)) {
+            console.log(`${meta.name} has received a local major upgrade which is great than what is available on npm: ${intended.format()} > ${current.format()}.`);
+        } else {
+            console.log(`${meta.name} has received a local patch upgrade, incrementing the version from npm by .1`);
+
+            let semversion = semver.coerce(pkg.version);
+            semversion.patch += 1;
+
+            version = semversion.format();
+        }
     }
 
     const [dependencies, peerDependencies] = (await Promise.all(Object.entries(meta.imports).map(async ([im, api_version]) => {
@@ -213,13 +226,11 @@ async function generatePackages(directory, includeList = null) {
 
             const shouldBeGenerated = includeList && !includeList.includes(meta.name);
 
-            if (shouldBeGenerated) {
-                const versions = versionMap.get(meta.name) || {};
+            const versions = versionMap.get(meta.name) || {};
 
-                versions[meta.api_version] = version;
+            versions[meta.api_version] = version;
 
-                versionMap.set(meta.name, versions);
-            }
+            versionMap.set(meta.name, versions);
 
             return { path: `gi-ts/${directory}`, isPrivate: !shouldBeGenerated, directory, package: packageName, gitHead, version, meta };
         })
@@ -231,7 +242,7 @@ async function generatePackages(directory, includeList = null) {
  * @param {string} tag 
  */
 function printPackages(packages, tag) {
-    return Promise.all(packages.map(async ({ path, isPrivate, directory, package: packageName, gitHead, version, meta }) => {
+    return Promise.allSettled(packages.map(async ({ path, isPrivate, directory, package: packageName, gitHead, version, meta }) => {
         if (!isPrivate) {
             const json = await buildPackageJSON(
                 path,
@@ -259,7 +270,20 @@ function printPackages(packages, tag) {
 export async function buildPackages(path, tag, packagesToUpdate) {
     const base = await generatePackages(`./_working/${path}/packages/${prefix}/`, packagesToUpdate);
 
-    await printPackages(base, tag).then(() => {
+    await printPackages(base, tag).then((results) => {
+        const success = results.map(result => result.status === 'fulfilled');
+        const failures = results.filter(
+            /**
+             * 
+             * @param {PromiseSettledResult<void>} result 
+             * @returns {result is PromiseRejectedResult}
+             */
+            (result) => result.status === 'rejected').map(result => result.reason);
+
+        console.log(`Successfully generated ${success.length} packages, ${failures.length} packages failed.`);
+        console.log(`Failures:`);
+        console.log(failures.join('\n'));
+        console.log(`Versions:`);
         console.log(versionMap);
     });
 }
