@@ -77,6 +77,10 @@ export function getFormattedDate() {
 export async function commitChangesFiles(path) {
     const cwd = workingDirectory(path);
 
+    // Set up correct committer.
+    await $exec(`git config user.email ${process.env.GITHUB_EMAIL}`, { cwd });
+    await $exec(`git config user.name ${process.env.GITHUB_USERNAME}`, { cwd });
+
     let { stdout, stderr } = await $exec(`git add -v packages/@gi-types/**/*`, { cwd });
 
     const formattedDate = getFormattedDate();
@@ -86,16 +90,15 @@ export async function commitChangesFiles(path) {
     if (stderr) console.log(stderr);
     if (stdout) console.log(stdout);
 
-    // TODO(ewlsh): Push to GitHub
-    // ({ stdout, stderr } = await $exec(`git push -u origin auto-updates/${formattedDate}`, { cwd }));
+    ({ stdout, stderr } = await $exec(`git push -f -u origin auto-updates/${formattedDate}`, { cwd }));
 
-    // if (stderr) console.log(stderr);
-    // if (stdout) console.log(stdout);
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
 
-    // ({ stdout, stderr } = await $exec(`gh pr create --title "Update ${formattedDate} for Types." --body "Type packages have been updated."`, { cwd }));
+    ({ stdout, stderr } = await $exec(`gh pr create --title "Update ${formattedDate} for Types." --body "Type packages have been updated."`, { cwd }));
 
-    // if (stderr) console.log(stderr);
-    // if (stdout) console.log(stdout);
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
 }
 
 
