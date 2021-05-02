@@ -78,8 +78,8 @@ export async function commitChangesFiles(path) {
     const cwd = workingDirectory(path);
 
     // Set up correct committer.
-    await $exec(`git config user.email ${process.env.GITHUB_EMAIL}`, { cwd });
-    await $exec(`git config user.name ${process.env.GITHUB_USERNAME}`, { cwd });
+    await $exec(`git config user.email ${process.env.GIT_EMAIL}`, { cwd });
+    await $exec(`git config user.name ${process.env.GIT_USERNAME}`, { cwd });
 
     let { stdout, stderr } = await $exec(`git add -v packages/@gi-types/**/*`, { cwd });
 
