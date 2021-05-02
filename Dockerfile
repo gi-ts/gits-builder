@@ -1,7 +1,7 @@
 FROM archlinux:latest
 
 # Update the system and install git and the github CLI.
-RUN pacman -Syu git github-cli
+RUN pacman -Syu --noconfirm git github-cli
 
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION v14
