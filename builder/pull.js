@@ -19,9 +19,13 @@ export async function cloneRepo(path) {
 
     let cwd = workingDirectory(path);
 
-    await rm(cwd, { recursive: true });
+    try {
+        await rm(cwd, { recursive: true });
+    } catch (err) { }
 
-    await mkdir(cwd, { recursive: true });
+    try {
+        await mkdir(cwd, { recursive: true });
+    } catch (err) { }
 
     let { stdout, stderr } = await $exec(`gh repo clone ${path} ${cwd}`);
 
