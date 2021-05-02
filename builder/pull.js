@@ -1,6 +1,6 @@
 import * as util from 'util';
 import { exec } from 'child_process';
-import { rm } from 'fs/promises';
+import { rm, mkdir } from 'fs/promises';
 import { getFormattedDate } from './git.js';
 
 const $exec = util.promisify(exec);
@@ -20,6 +20,8 @@ export async function cloneRepo(path) {
     let cwd = workingDirectory(path);
 
     await rm(cwd, { recursive: true });
+
+    await mkdir(cwd, { recursive: true });
 
     let { stdout, stderr } = await $exec(`gh repo clone ${path} ${cwd}`);
 
