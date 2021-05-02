@@ -1,0 +1,46 @@
+name: 'Update Types workflow (weekly)'
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  base:
+    name: Update Base Types (weekly)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/update-types
+        with:
+           set-to-build: base
+  gtk3:
+    name: Update GTK3 Types (weekly)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/update-types
+        with:
+           set-to-build: gtk3
+  gtk4:
+    name: Update GTK4 Types (weekly)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/update-types
+        with:
+           set-to-build: gtk4
+  shell8:
+    name: Update Shell (8) Types (weekly)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/update-types
+        with:
+           set-to-build: shell8

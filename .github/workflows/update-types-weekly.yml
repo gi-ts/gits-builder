@@ -1,14 +1,22 @@
-name: 'Update Types workflow'
+name: 'Update Types workflow (manually)'
 on:
   schedule:
     - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      set-to-build:
+        description: 'Set to build'
+        required: true
+        default: 'base'
 
 jobs:
-  build:
-    name: Update Types (weekly)
+  base:
+    name: Update Types (manually)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
       - uses: ./.github/actions/update-types
+        with:
+           set-to-build: "${{ github.event.inputs.set-to-build }}"
