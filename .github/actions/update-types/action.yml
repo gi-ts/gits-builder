@@ -1,0 +1,13 @@
+# action.yml
+name: 'gi.ts Builder'
+description: 'Update GObject Introspection TypeScript definitions'
+inputs:
+  set-to-build:
+    description: 'Which set of packages to build'
+    required: true
+    default: 'base'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.set-to-build }}

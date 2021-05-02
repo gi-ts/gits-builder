@@ -23,8 +23,6 @@ RUN npm -v
 
 Run npm install -g yarn
 
-WORKDIR /opt/gits/
-
 COPY package.json ./
 COPY yarn.lock ./
 
@@ -32,4 +30,6 @@ RUN yarn install
 
 COPY . .
 
-CMD [ "yarn", "build" ]
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
