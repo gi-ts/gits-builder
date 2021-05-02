@@ -3,6 +3,12 @@ FROM archlinux:latest
 # Update the system and install git and the github CLI.
 RUN pacman -Syu --noconfirm git github-cli
 
+# Install GNOME dependencies...
+RUN pacman -Syu --noconfirm accountsservice atk cairo dbus \
+harfbuzz gcr gdk-pixbuf2 gdm geoclue glib2 gobject-introspection \
+ibus json-glib malcontent modemmanager libnm libnotify \
+pango polkit rsvg libsoup telepathy-glib upower
+
 RUN mkdir ./nvm-install
 ENV NVM_DIR ./nvm-install
 ENV NODE_VERSION v14
