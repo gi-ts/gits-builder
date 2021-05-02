@@ -11,7 +11,7 @@ const MUTTER_VERSION = '8';
  * @param {string} path
  */
 export function workingDirectory(path) {
-    return `./_working/${path}`;
+    return `${process.env.GITHUB_WORKSPACE || '.'}/_working/${path}`;
 }
 
 export async function cloneRepo(path) {

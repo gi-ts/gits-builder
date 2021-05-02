@@ -268,7 +268,7 @@ function printPackages(packages, tag) {
  * @param {string[]} packagesToUpdate
  */
 export async function buildPackages(path, tag, packagesToUpdate) {
-    const base = await generatePackages(`./_working/${path}/packages/${prefix}/`, packagesToUpdate);
+    const base = await generatePackages(`${process.env.GITHUB_WORKSPACE || '.'}/_working/${path}/packages/${prefix}/`, packagesToUpdate);
 
     await printPackages(base, tag).then((results) => {
         const success = results.map(result => result.status === 'fulfilled');

@@ -11,7 +11,7 @@ import { workingDirectory } from './pull.js';
  * @returns {Promise<string[]>}
  */
 export async function hasModifiedPackageFiles(path) {
-    const cwd = `./_working/${path}`;
+    const cwd = `${process.env.GITHUB_WORKSPACE || '.'}/_working/${path}`;
 
     const { stdout, stderr } = await $exec(`git status -s`, { cwd });
 
