@@ -1,11 +1,17 @@
-name: 'Update Types workflow (weekly)'
+name: 'Update Types (manually)'
 on:
   schedule:
     - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      set-to-build:
+        description: 'Set to build'
+        required: true
+        default: 'base'
 
 jobs:
   base:
-    name: Update Base Types (weekly)
+    name: Update Types
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -13,34 +19,4 @@ jobs:
           fetch-depth: 1
       - uses: ./.github/actions/update-types
         with:
-           set-to-build: base
-  gtk3:
-    name: Update GTK3 Types (weekly)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - uses: ./.github/actions/update-types
-        with:
-           set-to-build: gtk3
-  gtk4:
-    name: Update GTK4 Types (weekly)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - uses: ./.github/actions/update-types
-        with:
-           set-to-build: gtk4
-  shell8:
-    name: Update Shell (8) Types (weekly)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - uses: ./.github/actions/update-types
-        with:
-           set-to-build: shell8
+           set-to-build: "${{ github.event.inputs.set-to-build }}"
