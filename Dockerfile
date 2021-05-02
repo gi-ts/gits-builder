@@ -1,13 +1,13 @@
 FROM archlinux:latest
 
 # Update the system and install git, node, and the github CLI.
-RUN pacman -Syu --noconfirm git github-cli nodejs-lts-fermium
+RUN pacman -Syu --noconfirm git github-cli nodejs npm
 
 # Install GNOME dependencies...
 RUN pacman -Syu --noconfirm accountsservice atk cairo dbus \
 harfbuzz gcr gdk-pixbuf2 gdm geoclue glib2 gobject-introspection \
 ibus json-glib malcontent modemmanager libnm libnotify \
-pango polkit rsvg libsoup telepathy-glib upower
+pango polkit librsvg libsoup telepathy-glib upower
 
 RUN node -v
 RUN npm -v
