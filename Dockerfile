@@ -7,7 +7,8 @@ RUN pacman -Syu --noconfirm git github-cli nodejs npm
 RUN pacman -Syu --noconfirm accountsservice atk cairo dbus \
 harfbuzz gcr gdk-pixbuf2 gdm geoclue glib2 gobject-introspection \
 ibus json-glib malcontent modemmanager libnm libnotify \
-pango polkit librsvg libsoup telepathy-glib telepathy-logger upower
+pango polkit librsvg libsoup telepathy-glib telepathy-logger upower \
+gnome-shell
 
 RUN node -v
 RUN npm -v

@@ -5,6 +5,11 @@ const $exec = util.promisify(exec);
 
 import { workingDirectory } from './pull.js';
 
+import * as process from 'process';
+import * as os from 'os';
+
+import { mkdir, writeFile } from 'fs/promises';
+
 /**
  * 
  * @param {string} path 
@@ -74,6 +79,12 @@ export function getFormattedDate() {
     return formattedDate;
 }
 
+function xdg_config_home() {
+    const xdg_config_home = process.env['XDG_CONFIG_HOME'];
+    if (xdg_config_home) return xdg_config_home;
+    return `${os.homedir()}/.config`;
+}
+
 export async function commitChangesFiles(path) {
     const cwd = workingDirectory(path);
 
@@ -81,9 +92,35 @@ export async function commitChangesFiles(path) {
     await $exec(`git config user.email ${process.env.GIT_EMAIL}`, { cwd });
     await $exec(`git config user.name ${process.env.GIT_USERNAME}`, { cwd });
 
+    const credentials = `https://${process.env.GIT_USERNAME}:${process.env.GH_APP_ACCESS_TOKEN}@github.com`;
+    
+    // From: https://github.com/fusion-engineering/setup-git-credentials/blob/master/src/main.ts
+    // Write credentials.
+    await mkdir(`${xdg_config_home()}/git`, { recursive: true });
+    await writeFile(`${xdg_config_home()}/git/credentials`, credentials, { flag: 'a', mode: 0o600 });
+
     let { stdout, stderr } = await $exec(`git add -v packages/@gi-types/**/*`, { cwd });
 
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
+
     const formattedDate = getFormattedDate();
+
+    // Add git configuration.
+    ({ stdout, stderr } = await $exec('git config credential.helper store'));
+  
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
+    
+    ({ stdout, stderr } = await $exec('git config --replace-all url.https://github.com/.insteadOf ssh://git@github.com/'));
+    
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
+    
+    ({ stdout, stderr } = await $exec('git config --add url.https://github.com/.insteadOf git@github.com:'));
+    
+    if (stderr) console.log(stderr);
+    if (stdout) console.log(stdout);
 
     ({ stdout, stderr } = await $exec(`git commit -m "Update ${formattedDate}."`, { cwd }));
 
