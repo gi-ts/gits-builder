@@ -6,7 +6,8 @@
     "build": "node builder/run.js"
   },
   "devDependencies": {
-    "@gi.ts/cli": "^1.4.1",
+    "@gi.ts/cli": "^1.5.5",
+    "@gi.ts/lib": "^1.5.3",
     "npm-api": "^1.0.1",
     "semver": "^7.3.5",
     "typescript": "^4.2.4"
