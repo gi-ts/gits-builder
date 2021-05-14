@@ -7,6 +7,11 @@ on:
         required: true
         default: 'base'
 
+env:
+  GIT_USERNAME: ${{secrets.GIT_USERNAME}}
+  GIT_EMAIL: ${{secrets.GIT_EMAIL}}
+  GH_APP_ACCESS_TOKEN: ${{secrets.GH_APP_ACCESS_TOKEN}}
+
 jobs:
   base:
     name: Update Types
