@@ -10,6 +10,7 @@ on:
 jobs:
   base:
     name: Update Types
+    environment: "Type Updating" 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1

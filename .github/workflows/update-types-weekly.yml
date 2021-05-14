@@ -6,6 +6,7 @@ on:
 jobs:
   base:
     name: Update Base Types
+    environment: "Type Updating"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -16,6 +17,7 @@ jobs:
            set-to-build: base
   gtk3:
     name: Update GTK3 Types
+    environment: "Type Updating"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -26,6 +28,7 @@ jobs:
            set-to-build: gtk3
   gtk4:
     name: Update GTK4 Types
+    environment: "Type Updating"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -36,6 +39,7 @@ jobs:
            set-to-build: gtk4
   shell8:
     name: Update Shell (8) Types
+    environment: "Type Updating"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
